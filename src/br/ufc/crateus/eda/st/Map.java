@@ -5,4 +5,5 @@ public interface Map<K, V> {
 	V get(K key);
 	void remove(K key);
 	Iterable<K> keys();
+	boolean contains(K key);
 }

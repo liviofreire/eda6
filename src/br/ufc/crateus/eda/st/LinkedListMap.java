@@ -59,4 +59,9 @@ public class LinkedListMap<K, V> implements Map<K, V> {
 		return keys;
 	}
 
+	@Override
+	public boolean contains(K key) {
+		return get(key) != null;
+	}
+
 }
