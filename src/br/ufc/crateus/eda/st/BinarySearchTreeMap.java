@@ -2,7 +2,7 @@ package br.ufc.crateus.eda.st;
 
 public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
 	
-	private class Node {
+	protected class Node {
 		K key;
 		V value;
 		Node left;
@@ -23,7 +23,7 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		root = put(root, key, value);
 	}
 	
-	private Node put(Node r, K key, V value) {
+	protected Node put(Node r, K key, V value) {
 		if (r == null) return new Node(key, value);
 		
 		if (key.compareTo(r.key) < 0) r.left = put(r.left, key, value);
@@ -34,7 +34,7 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		return r;
 	}
 	
-	private int count(Node n) {
+	protected int count(Node n) {
 		return (n != null)? n.count : 0;
 	}
 
