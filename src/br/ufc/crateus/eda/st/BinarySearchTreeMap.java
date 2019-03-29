@@ -1,30 +1,39 @@
 package br.ufc.crateus.eda.st;
 
-public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedMap<K, V> {
-	
-	protected class Node {
-		K key;
-		V value;
-		Node left;
-		Node right;
-		int count;
+public class BinarySearchTreeMap<K extends Comparable<K>, V> extends AbstractBinarySearchTreeMap<K, V> {
+	private class BSTNode extends Node {
+		BSTNode left;
+		BSTNode right;
 		
-		public Node(K key, V value) {
-			this.key = key;
-			this.value = value;
-			this.count = 1;
+		public BSTNode(K key, V value) {
+			super(key, value);
 		}
+
+		@Override
+		Node left() {
+			return left;
+		}
+
+		@Override
+		Node right() {
+			return right;
+		}
+		
 	}
 	
-	Node root;
+	private BSTNode root; 
+	
+	public Node getRoot() {
+		return root;
+	}
 	
 	@Override
 	public void put(K key, V value) {
 		root = put(root, key, value);
 	}
 	
-	protected Node put(Node r, K key, V value) {
-		if (r == null) return new Node(key, value);
+	protected BSTNode put(BSTNode r, K key, V value) {
+		if (r == null) return new BSTNode(key, value);
 		
 		if (key.compareTo(r.key) < 0) r.left = put(r.left, key, value);
 		else if (key.compareTo(r.key) > 0) r.right = put(r.right, key, value);
@@ -34,31 +43,7 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		return r;
 	}
 	
-	protected int count(Node n) {
-		return (n != null)? n.count : 0;
-	}
-
-	private Node getNode(Node r, K key) {
-		if (r == null) return null;
-		
-		int cmp = key.compareTo(r.key);
-		if (cmp < 0) return getNode(r.left, key);
-		if (cmp > 0) return getNode(r.right, key);
-		return r;
-	}
-
-	@Override
-	public V get(K key) {
-		Node node = getNode(root, key);
-		return (node != null)? node.value : null;
-	}
-
-	@Override
-	public boolean contains(K key) {
-		return get(key) != null;
-	}
-	
-	private Node removeMin(Node r) {
+	private BSTNode removeMin(BSTNode r) {
 		if (r.left == null) return r.right;
 		r.left = removeMin(r.left);
 		r.count = count(r.left) + count(r.right) + 1;
@@ -70,7 +55,7 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		root = removeMin(root);
 	}
 	
-	private Node removeMax(Node r) {
+	private BSTNode removeMax(BSTNode r) {
 		if (r.right == null) return r.left;
 		r.right = removeMax(r.right);
 		r.count = count(r.left) + count(r.right) + 1;
@@ -82,7 +67,8 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		root = removeMax(root);
 	}
 	
-	private Node remove(Node r, K key) {
+	@SuppressWarnings("unchecked")
+	private BSTNode remove(BSTNode r, K key) {
 		if (r == null) return null;
 		
 		int cmp = key.compareTo(r.key); 
@@ -91,8 +77,8 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 		else {
 			if (r.left == null) return r.right;
 			if (r.right == null) return r.left;
-			Node t = r;
-			r = maxNode(r.left);
+			BSTNode t = r;
+			r = (BSTNode) maxNode(r.left);
 			r.right = t.right;
 			r.left = removeMax(t.left);
 		}
@@ -105,68 +91,4 @@ public class BinarySearchTreeMap<K extends Comparable<K>, V> implements OrderedM
 	public void remove(K key) {
 		root = remove(root, key);
 	}
-
-	@Override
-	public Iterable<K> keys() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private Node minNode(Node r) {
-		if (r == null) return null;
-		while (r.left != null) r = r.left;
-		return r;
-	}
-
-	@Override
-	public K min() {
-		Node m = minNode(root);
-		return (m != null)? m.key : null;
-	}
-	
-	private Node maxNode(Node r) {
-		if (r == null) return null;
-		while (r.right != null) r = r.right;
-		return r;
-	}
-
-	@Override
-	public K max() {
-		Node m = maxNode(root);
-		return (m != null)? m.key : null;
-	}
-	
-	private K floor(Node r, K e) {
-		if (r == null) return null;
-		int cmp = e.compareTo(r.key);
-		if (cmp < 0) return floor(r.left, e);
-		if (cmp > 0) {
-			K tmp = floor(r.right, e);
-			return (tmp != null)? tmp : r.key;
-		}
-		return r.key;
-	}
-
-	@Override
-	public K floor(K e) {
-		return floor(root, e);
-	}
-	
-	private K ceiling(Node r, K e) {
-		if (r == null) return null;
-		int cmp = e.compareTo(r.key);
-		if (cmp > 0) return ceiling(r.right, e);
-		if (cmp < 0) {
-			K tmp = ceiling(r.left, e);
-			return (tmp != null)? tmp : r.key;
-		}
-		return r.key;
-	}
-
-	@Override
-	public K ceiling(K e) {
-		return ceiling(root, e);
-	}
-
-
 }
